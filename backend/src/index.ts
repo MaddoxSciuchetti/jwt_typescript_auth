@@ -69,9 +69,9 @@ app.use(errorHandler)
 //     } try {
 //         if(await bcrypt.compare(req.body.password, user_raw.password)){
 //             const username = req.body.username
-            // const user = {name: username}
+//             const user = {name: username}
 //             const accessToken = generateAccessToken(user)
-            // const refreshToken = jwt.sign(user, REFRESH_TOKEN_SECRET)
+//             const refreshToken = jwt.sign(user, REFRESH_TOKEN_SECRET)
 //             refreshTokens.push(refreshToken)
 //             res.json({ accessToken: accessToken, refreshToken: refreshToken})
 //         } else {

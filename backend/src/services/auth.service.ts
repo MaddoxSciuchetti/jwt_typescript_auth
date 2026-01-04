@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { CREATED, UNAUTHORIZED } from "../constants/http";
+import { CREATED, NO_CONTENT, UNAUTHORIZED } from "../constants/http";
 // import { generateAccessToken, generateRefreshToken } from "../utils/Tokens";
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../constants/env";
 import jwt from "jsonwebtoken";
@@ -18,7 +18,7 @@ export type Data = {
 
 // temporary storage just for testing
 
-let refreshTokens: string[] = [
+export let refreshTokens: string[] = [
 
 ]
 
@@ -59,6 +59,7 @@ export const loginAccount = async(data: createAccountParams) => {
          )
          
          refreshTokens.push(refreshToken)
+         console.log("these are the refreshtokens ", refreshTokens)
          return {
              accessToken, refreshToken
          };
@@ -67,17 +68,26 @@ export const loginAccount = async(data: createAccountParams) => {
      }       
 }
 
-export const tokenAccount = async (data: Data) => {
+export const tokenAccount = async (data: Data): Promise<any>=> {
     const refreshToken = data.token
-    if(refreshToken == null) throw new Error("UNAUTHORIZED")
+    console.log(refreshToken)
+    if(refreshToken == null ) throw new Error("n")
     if(!refreshTokens.includes(refreshToken)) throw new Error("FORBIDDEN")
-
-    jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user: any ) => {
-        if(err) throw new Error("FORBIDDEN")
-            const accessToken: string = jwt.sign(
-        {name: user.name}, ACCESS_TOKEN_SECRET, {expiresIn: "15s"})
-        return { accessToken}
+    return jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user: any) => {
+    if(err) throw new Error("FORBIDDEN")
+        const accessToken = jwt.sign({name: user.name}, ACCESS_TOKEN_SECRET, {expiresIn: "15s"})
+        console.log(accessToken)
+        return {
+            accessToken, 
+        }
     })
-    
+}
 
+
+
+export const deleteRefreshToken = async (data: Data) => {
+    refreshTokens = refreshTokens.filter(token => token !== data.token)
+    return {
+        NO_CONTENT
+    }
 }

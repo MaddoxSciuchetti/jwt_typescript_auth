@@ -3,8 +3,9 @@ import bcrypt from "bcrypt";
 import {CREATED, FORBIDDEN} from "../constants/http";
 import { register } from "node:module";
 import catchErrors from "../utils/catchErrors";
-import { createAccount, loginAccount, tokenAccount } from "../services/auth.service";
-import { setAuthCookies } from "../utils/cookies";
+import { createAccount, deleteRefreshToken, loginAccount, tokenAccount } from "../services/auth.service";
+import { setAuthCookies, setTokenCookies } from "../utils/cookies";
+
 
 const registerSchema = z.object({
     username: z.string().min(1).max(55),
@@ -17,6 +18,11 @@ const registerSchema = z.object({
         path: ["confirmPassword"]
     }
 )
+
+const tokenSchema = z.object({
+    token: z.string(),
+    userAgent: z.string().optional()
+})
 
 export const signupHandler = catchErrors(
     async (req, res) => {
@@ -63,17 +69,40 @@ export const tokenHandler = catchErrors(
     async (req, res) => {
 
         // validate the request
-        const request = req.body
-
+        const request = tokenSchema.parse({
+            ...req.body,
+            userAgent: req.headers["user-agent"]
+        })
 
         // call the service
 
-        const {accessToken} = await tokenAccount(request)
+        const {accessToken} = await tokenAccount(request);
 
         // return response
 
-        return setAuthCookies({ res, accessToken})
+        return setTokenCookies({res, accessToken})
         .status(CREATED).json("sucess")
        
+    }
+)
+
+export const deleteTokenHandler = catchErrors(
+    async (req, res) => {
+
+        // validate the request
+
+        const request = tokenSchema.parse({
+            ...req.body,
+            userAgent: req.headers["user-agent"]
+        })
+
+        // call the service
+
+        const value = await deleteRefreshToken(request)
+
+        // return response
+
+        return res.status(CREATED).send("the refresh token was deleted")
+
     }
 )
