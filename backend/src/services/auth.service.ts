@@ -15,6 +15,9 @@ export type Data = {
     token: string
 }
 
+export type PostRequest = {
+    username: string
+}
 
 // temporary storage just for testing
 
@@ -24,6 +27,24 @@ export let refreshTokens: string[] = [
 
 const users: createAccountParams[] =  [
 
+]
+
+const posts = [
+    {
+        username: "Kyle",
+        password: "",
+        title: "Post1"
+    },
+    {
+        username: "Jim",
+        passsword: "",
+        title: "Post2"
+    },
+
+    {
+        username: "maddox",
+        title:"this is only for him"
+    }
 ]
 
 export const createAccount = async(data: createAccountParams) => {
@@ -83,11 +104,18 @@ export const tokenAccount = async (data: Data): Promise<any>=> {
     })
 }
 
-
-
 export const deleteRefreshToken = async (data: Data) => {
     refreshTokens = refreshTokens.filter(token => token !== data.token)
     return {
         NO_CONTENT
+    }
+}
+
+export const getPosts = async(data: PostRequest) => {
+    if(posts.filter(post => post.username !== data.username))
+        return ({ "message": "you have yet to upload posts"})
+    else {
+        const post_result = posts.filter(post => post.username === data.username)
+        return post_result
     }
 }

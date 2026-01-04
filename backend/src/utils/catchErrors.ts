@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-type AsyncController = (
+export type AsyncController = (
     req: Request,
     res: Response,
     next: NextFunction

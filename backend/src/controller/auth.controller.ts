@@ -3,8 +3,13 @@ import bcrypt from "bcrypt";
 import {CREATED, FORBIDDEN} from "../constants/http";
 import { register } from "node:module";
 import catchErrors from "../utils/catchErrors";
-import { createAccount, deleteRefreshToken, loginAccount, tokenAccount } from "../services/auth.service";
+import { createAccount, deleteRefreshToken, getPosts, loginAccount, tokenAccount } from "../services/auth.service";
 import { setAuthCookies, setTokenCookies } from "../utils/cookies";
+import jwt from "jsonwebtoken";
+import { ACCESS_TOKEN_SECRET } from "../constants/env";
+import { NextFunction, Request, Response } from "express";
+import { JwtPayload } from "jsonwebtoken";
+
 
 
 const registerSchema = z.object({
@@ -21,6 +26,12 @@ const registerSchema = z.object({
 
 const tokenSchema = z.object({
     token: z.string(),
+    userAgent: z.string().optional()
+})
+
+
+const postSchema = z.object({
+    username: z.string(),
     userAgent: z.string().optional()
 })
 
@@ -106,3 +117,43 @@ export const deleteTokenHandler = catchErrors(
 
     }
 )
+
+export const handleposts = catchErrors(
+    async(req, res) => {
+        // validate the request
+
+        const request = postSchema.parse({
+            ...req.body,
+            userAgent: req.headers["user-agent"]
+        })
+        
+        // call the service
+
+        const posts = await getPosts(request) 
+
+
+        // return the response
+
+        return res.status(CREATED).json(posts)
+
+    }
+)
+
+
+export interface RequestCustomer extends Request{
+    user: string | JwtPayload | undefined
+}
+
+
+export function authentificationToken(req: RequestCustomer,  res: Response, next: NextFunction) {
+
+    const authHeader = req.headers["authorization"]
+    const token = authHeader && authHeader.split(" ")[1]
+    if(token == null) return res.status(401).send({error: "unauthorized"})
+
+    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
+        if(err) return res.status(403).send({ error: "forbidden"})
+        req.user = user
+        next()
+    })
+}
