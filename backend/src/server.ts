@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 import { ACCESS_TOKEN_SECRET } from "./constants/env";
 import postsRoutes from "./routes/posts.route";
 import { errorHandler } from "./middleware/errorHandler";
-import { authentificationToken } from "./controller/auth.controller";
+
 const app = express()
 
 app.use(express.json())
@@ -27,6 +27,10 @@ app.use(express.json())
 //         title:"this is only for him"
 //     }
 // ]
+
+app.get("/healthcheck", (req, res) => {
+    res.json("healthy");
+})
 
 
 

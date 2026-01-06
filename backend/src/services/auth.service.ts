@@ -96,7 +96,7 @@ export const tokenAccount = async (data: Data): Promise<any>=> {
     if(!refreshTokens.includes(refreshToken)) throw new Error("FORBIDDEN")
     return jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user: any) => {
     if(err) throw new Error("FORBIDDEN")
-        const accessToken = jwt.sign({name: user.name}, ACCESS_TOKEN_SECRET, {expiresIn: "15s"})
+        const accessToken = jwt.sign({name: user.name}, ACCESS_TOKEN_SECRET, {expiresIn: "30s"})
         console.log(accessToken)
         return {
             accessToken, 
@@ -112,10 +112,7 @@ export const deleteRefreshToken = async (data: Data) => {
 }
 
 export const getPosts = async(data: PostRequest) => {
-    if(posts.filter(post => post.username !== data.username))
-        return ({ "message": "you have yet to upload posts"})
-    else {
-        const post_result = posts.filter(post => post.username === data.username)
-        return post_result
-    }
+    console.log(data)
+    const post_result = posts.filter(post => post.username === data.username)
+    return post_result
 }

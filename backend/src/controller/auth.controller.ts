@@ -1,6 +1,6 @@
 import z from "zod";
 import bcrypt from "bcrypt";
-import {CREATED, FORBIDDEN} from "../constants/http";
+import {CREATED, FORBIDDEN, OK, UNAUTHORIZED} from "../constants/http";
 import { register } from "node:module";
 import catchErrors from "../utils/catchErrors";
 import { createAccount, deleteRefreshToken, getPosts, loginAccount, tokenAccount } from "../services/auth.service";
@@ -117,26 +117,6 @@ export const deleteTokenHandler = catchErrors(
 
     }
 )
-export interface RequestCustomer extends Request{
-    user: string | JwtPayload | undefined
-}
-
-
-
-
-export const authentificationToken = function(req: RequestCustomer,  res: Response, next: NextFunction) {
-
-    const authHeader = req.headers["authorization"]
-    const token = authHeader && authHeader.split(" ")[1]
-    if(token == null) throw new Error("unauthrized")
-
-    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
-        if(err) throw new Error("status forbiden")
-            req.user = user
-        next()
-        return ;
-    })
-}
 
 
 export const handleposts = catchErrors(
@@ -147,6 +127,7 @@ export const handleposts = catchErrors(
             ...req.body,
             userAgent: req.headers["user-agent"]
         })
+        
         
         // call the service
         

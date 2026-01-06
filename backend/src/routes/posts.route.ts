@@ -1,11 +1,14 @@
 import { Router } from "express";
-import {  authentificationToken, handleposts } from "../controller/auth.controller";
+import { handleposts } from "../controller/auth.controller";
+import { authentificationToken } from "../utils/authenficatingToken";
+
+
 
 const postsRoutes = Router()
 
 
 
-postsRoutes.post("/login", handleposts)
+postsRoutes.get("/login", authentificationToken as any, handleposts)
 
 
 export default postsRoutes;
