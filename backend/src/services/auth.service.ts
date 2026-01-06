@@ -92,7 +92,7 @@ export const loginAccount = async(data: createAccountParams) => {
 export const tokenAccount = async (data: Data): Promise<any>=> {
     const refreshToken = data.token
     console.log(refreshToken)
-    if(refreshToken == null ) throw new Error("n")
+    if(refreshToken == null ) throw new Error("the token is null")
     if(!refreshTokens.includes(refreshToken)) throw new Error("FORBIDDEN")
     return jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, (err, user: any) => {
     if(err) throw new Error("FORBIDDEN")

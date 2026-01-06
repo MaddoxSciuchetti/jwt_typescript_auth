@@ -29,7 +29,8 @@ app.use(express.json())
 // ]
 
 
-app.get("/posts", postsRoutes)
+
+app.use("/posts", postsRoutes)
 
 app.use(errorHandler)
 
