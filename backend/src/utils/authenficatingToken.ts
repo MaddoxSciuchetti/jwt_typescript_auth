@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 
 export interface RequestCustomer extends Request{
-    user: string | JwtPayload | undefined
+    user?: string | JwtPayload | undefined
 }
 
 

@@ -8,7 +8,7 @@ const postsRoutes = Router()
 
 
 
-postsRoutes.get("/login", authentificationToken as any, handleposts)
+postsRoutes.get("/login", authentificationToken as any  , handleposts)
 
 
 export default postsRoutes;

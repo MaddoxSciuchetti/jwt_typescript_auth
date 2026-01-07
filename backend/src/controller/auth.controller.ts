@@ -71,8 +71,6 @@ export const loginHandler = catchErrors(
         // return response
         return setAuthCookies({ res, accessToken, refreshToken})
         .status(CREATED).json("sucess")
-
-
     }
 )
 
@@ -128,16 +126,13 @@ export const handleposts = catchErrors(
             userAgent: req.headers["user-agent"]
         })
         
-        
         // call the service
         
         const posts = await getPosts(request) 
         
-        
         // return the response
         
         return res.status(CREATED).json(posts)
-        
     }
 )
 
